@@ -7,20 +7,20 @@ st.set_page_config(page_title="Notakto Game", layout="wide")
 # Custom CSS to make buttons perfectly square and large
 st.markdown("""
 <style>
-    /* Make grid buttons square and text large (only targets buttons inside columns) */
     div[data-testid="column"] div[data-testid="stButton"] button {
         aspect-ratio: 1 / 1;
-        font-size: 3rem !important;
+        font-size: 5rem !important;
         font-weight: bold !important;
-        border-radius: 10px;
+        border-radius: 8px;
+        border: 4px solid #444 !important;
+        padding: 0;
+        line-height: 1;
     }
     
-    /* Style for disabled buttons (dead boards or played spots) inside columns */
     div[data-testid="column"] div[data-testid="stButton"] button:disabled {
         opacity: 0.6 !important;
-        background-color: #f0f2f6 !important;
-        color: #555555 !important;
-        border: none !important;
+        background-color: #2b2b36 !important;
+        color: #888 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -45,24 +45,19 @@ def update_game_state(last_player):
         st.session_state.winner = "AI" if last_player == "Player" else "Player"
 
 def make_move(index):
-    # Ignore invalid moves
     if st.session_state.game_over or st.session_state.board_array[index] != 0:
         return
         
-    # Ignore clicks on dead boards
     board_idx = index // 9
     if not st.session_state.active_boards[board_idx]:
         return
 
-    # Player makes a move
     st.session_state.board_array[index] = 1
     update_game_state("Player")
     
-    # AI's turn if game is not over
     if not st.session_state.game_over:
         st.session_state.current_turn = "AI"
         
-        # AI move calculation
         move = get_ai_move(st.session_state.board_array, st.session_state.difficulty)
         if move is not None:
             st.session_state.board_array[move] = 1
@@ -100,29 +95,34 @@ else:
                 local_index = best_move % 9
                 row = local_index // 3 + 1
                 col = local_index % 3 + 1
-                st.warning(f"💡 AI Tutor Suggests: Board {board_num}, Row {row}, Col {col} (Index {best_move})")
+                st.warning(f"💡 AI Tutor Suggests: Board {board_num}, Row {row}, Col {col}")
 
 # Render boards
 cols = st.columns(3)
 for board_idx in range(3):
     with cols[board_idx]:
-        st.subheader(f"Board {board_idx + 1}")
+        st.markdown(f"<h3 style='text-align: center;'>Board {board_idx + 1}</h3>", unsafe_allow_html=True)
         is_active = st.session_state.active_boards[board_idx]
         if not is_active:
-            st.error("DEAD")
+            st.markdown("<div style='text-align: center; padding: 0.5rem; background-color: rgba(255, 75, 75, 0.2); border: 1px solid rgba(255, 75, 75, 0.5); border-radius: 5px; color: #ff4b4b; font-weight: bold; margin-bottom: 1rem;'>DEAD</div>", unsafe_allow_html=True)
         else:
-            st.success("ACTIVE")
+            st.markdown("<div style='text-align: center; padding: 0.5rem; background-color: rgba(9, 171, 59, 0.2); border: 1px solid rgba(9, 171, 59, 0.5); border-radius: 5px; color: #09ab3b; font-weight: bold; margin-bottom: 1rem;'>ACTIVE</div>", unsafe_allow_html=True)
             
-        # Draw 3x3 grid
+        col_headers = st.columns([0.3, 1, 1, 1])
+        with col_headers[1]: st.markdown("<div style='text-align: center; color: #aaa;'>C1</div>", unsafe_allow_html=True)
+        with col_headers[2]: st.markdown("<div style='text-align: center; color: #aaa;'>C2</div>", unsafe_allow_html=True)
+        with col_headers[3]: st.markdown("<div style='text-align: center; color: #aaa;'>C3</div>", unsafe_allow_html=True)
+        
         for row in range(3):
-            grid_cols = st.columns(3)
+            grid_cols = st.columns([0.3, 1, 1, 1])
+            with grid_cols[0]:
+                st.markdown(f"<div style='text-align: center; color: #aaa; padding-top: 3.5rem;'>R{row+1}</div>", unsafe_allow_html=True)
             for col in range(3):
                 cell_idx = board_idx * 9 + row * 3 + col
                 val = st.session_state.board_array[cell_idx]
                 label = "X" if val == 1 else " "
                 
-                with grid_cols[col]:
-                    # Disable button if board is dead, spot is taken, or game is over
+                with grid_cols[col+1]:
                     disabled = not is_active or val == 1 or st.session_state.game_over
                     st.button(
                         label,

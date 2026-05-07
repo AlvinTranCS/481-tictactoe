@@ -214,7 +214,57 @@ st.write("### Rules")
 st.write("Both players play 'X'. Getting 3-in-a-row kills that board. The player who gets 3-in-a-row on the **final** active board **LOSES**.")
 
 if st.session_state.game_over:
-    st.success(f"Game Over! {st.session_state.winner} wins!")
+    winner = st.session_state.winner
+    color_class = "red" if winner == "AI" else "green"
+    
+    modal_html = f"""
+    <style>
+    #modal-toggle {{ display: none; }}
+    #modal-toggle:checked ~ .modal-wrapper {{ display: none; }}
+    .modal-wrapper {{
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 9999; display: flex; justify-content: center; align-items: center;
+    }}
+    .modal-bg {{
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+        cursor: pointer;
+    }}
+    .modal-content {{
+        position: relative; z-index: 10000;
+        padding: 3rem 5rem; border-radius: 20px; text-align: center;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }}
+    .modal-content.red {{
+        background: rgba(255, 75, 75, 0.15); border: 2px solid rgba(255, 75, 75, 0.6);
+        box-shadow: 0 0 40px rgba(255, 75, 75, 0.4); color: #ff4b4b;
+    }}
+    .modal-content.green {{
+        background: rgba(0, 255, 102, 0.15); border: 2px solid rgba(0, 255, 102, 0.6);
+        box-shadow: 0 0 40px rgba(0, 255, 102, 0.4); color: #00ff66;
+    }}
+    .close-btn {{
+        position: absolute; top: 10px; right: 20px;
+        font-size: 2.5rem; cursor: pointer; color: inherit; line-height: 1;
+        transition: transform 0.2s;
+    }}
+    .close-btn:hover {{ transform: scale(1.2); }}
+    @keyframes popIn {{
+        from {{ transform: scale(0.5); opacity: 0; }}
+        to {{ transform: scale(1); opacity: 1; }}
+    }}
+    </style>
+    <input type="checkbox" id="modal-toggle">
+    <div class="modal-wrapper">
+        <label for="modal-toggle" class="modal-bg"></label>
+        <div class="modal-content {color_class}">
+            <label for="modal-toggle" class="close-btn">&times;</label>
+            <h1 style="color: inherit !important; text-shadow: 0 0 20px currentColor; font-size: 4rem; margin: 0;">Game Over!</h1>
+            <h2 style="color: inherit !important; margin: 0; margin-top: 10px; font-size: 2.5rem;">{winner} Wins!</h2>
+        </div>
+    </div>
+    """
+    st.markdown(modal_html, unsafe_allow_html=True)
 else:
     if st.session_state.current_turn == "Player":
         st.info("Your turn! Place an 'X' on any active board.")

@@ -13,8 +13,8 @@ st.markdown("""
     }
 
     /* Make grid buttons square, glassmorphism, and glowing */
-    div[data-testid="column"] div[data-testid="stButton"] button {
-        aspect-ratio: 1 / 1;
+    div[data-testid="column"] button {
+        aspect-ratio: 1 / 1 !important;
         font-size: 5rem !important;
         font-weight: bold !important;
         border-radius: 12px;
@@ -24,22 +24,27 @@ st.markdown("""
         -webkit-backdrop-filter: blur(10px);
         color: #00e5ff !important; /* Glowing neon blue text */
         text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
-        padding: 0;
-        line-height: 1;
+        padding: 0 !important;
+        line-height: 1 !important;
         transition: all 0.3s ease-in-out;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 229, 255, 0.05);
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
     
-    div[data-testid="column"] div[data-testid="stButton"] button p {
+    /* Target whatever element Streamlit puts inside the button for the X */
+    div[data-testid="column"] button * {
         font-size: 5rem !important;
         font-weight: bold !important;
         margin: 0 !important;
         padding: 0 !important;
         line-height: 1 !important;
+        color: inherit !important;
     }
     
     /* Hover effect for active grid buttons */
-    div[data-testid="column"] div[data-testid="stButton"] button:hover:not(:disabled) {
+    div[data-testid="column"] button:hover:not(:disabled) {
         border-color: rgba(0, 229, 255, 0.6) !important;
         background: rgba(0, 229, 255, 0.1) !important;
         box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.1);
@@ -47,14 +52,14 @@ st.markdown("""
     }
     
     /* Style for disabled buttons (dead boards or played spots) */
-    div[data-testid="column"] div[data-testid="stButton"] button:disabled {
+    div[data-testid="column"] button:disabled {
         opacity: 1 !important; /* Removed grayed out effect */
         background: rgba(0, 229, 255, 0.05) !important; /* Keep it looking like active empty cells */
         border: 1px solid rgba(0, 229, 255, 0.2) !important;
         color: #00e5ff !important;
         text-shadow: 0 0 10px #00e5ff;
-        box-shadow: none;
-        transform: none;
+        box-shadow: none !important;
+        transform: none !important;
     }
     
     /* Sidebar dark mode enforcement */

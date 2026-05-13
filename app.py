@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from game_logic import get_active_boards, is_game_over
 from ai_agent import get_ai_move, get_best_move
 
@@ -49,6 +50,21 @@ st.markdown("""
         background: rgba(0, 229, 255, 0.1) !important;
         box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.1);
         transform: translateY(-2px);
+    }
+    
+    /* Primary button style for tutor mode glow */
+    div[data-testid="column"] button[kind="primary"] {
+        border-color: rgba(0, 255, 102, 0.6) !important;
+        background: rgba(0, 255, 102, 0.1) !important;
+        box-shadow: 0 0 20px rgba(0, 255, 102, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.2) !important;
+        color: #00ff66 !important;
+        text-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66 !important;
+    }
+    
+    div[data-testid="column"] button[kind="primary"]:hover:not(:disabled) {
+        border-color: rgba(0, 255, 102, 0.8) !important;
+        background: rgba(0, 255, 102, 0.2) !important;
+        box-shadow: 0 0 25px rgba(0, 255, 102, 0.6), inset 0 0 20px rgba(0, 255, 102, 0.3) !important;
     }
     
     /* Style for disabled buttons (dead boards or played spots) */
@@ -195,6 +211,7 @@ def make_move(index):
         st.session_state.current_turn = "AI"
         
         move = get_ai_move(st.session_state.board_array, st.session_state.difficulty)
+            
         if move is not None:
             st.session_state.board_array[move] = 1
             update_game_state("AI")
@@ -214,6 +231,47 @@ if st.sidebar.button("Restart Game"):
         if key in st.session_state:
             del st.session_state[key]
     st.rerun()
+
+st.sidebar.markdown("---")
+st.sidebar.header("AI vs AI Simulation")
+sim_games = st.sidebar.number_input("Number of Games", min_value=1, max_value=1000, value=100)
+ai1_difficulty = st.sidebar.selectbox("AI 1 (First) Difficulty", ["Easy", "Medium", "Hard"], index=2, key="ai1")
+ai2_difficulty = st.sidebar.selectbox("AI 2 (Second) Difficulty", ["Easy", "Medium", "Hard"], index=0, key="ai2")
+
+if st.sidebar.button("Run Simulation"):
+    progress_bar = st.sidebar.progress(0)
+    ai1_wins = 0
+    ai2_wins = 0
+    
+    for i in range(sim_games):
+        board = [0] * 27
+        current_ai = 1
+        
+        while True:
+            if is_game_over(board):
+                # The game is already over before moving? Should not happen initially, but just in case
+                break
+                
+            diff = ai1_difficulty if current_ai == 1 else ai2_difficulty
+            move = get_ai_move(board, diff)
+            
+            if move is not None:
+                board[move] = 1
+                if is_game_over(board):
+                    # The AI who just moved killed the final board and LOST
+                    if current_ai == 1:
+                        ai2_wins += 1
+                    else:
+                        ai1_wins += 1
+                    break
+            else:
+                break
+                
+            current_ai = 2 if current_ai == 1 else 1
+            
+        progress_bar.progress((i + 1) / sim_games)
+        
+    st.sidebar.success(f"**Simulation Complete!**\n\nAI 1 ({ai1_difficulty}): {ai1_wins} Wins\n\nAI 2 ({ai2_difficulty}): {ai2_wins} Wins")
 
 st.write("### Rules")
 st.write("Both players play 'X'. Getting 3-in-a-row kills that board. The player who gets 3-in-a-row on the **final** active board **LOSES**.")
@@ -271,6 +329,7 @@ if st.session_state.game_over:
     """
     st.markdown(modal_html, unsafe_allow_html=True)
 else:
+    best_move = None
     if st.session_state.current_turn == "Player":
         st.info("Your turn! Place an 'X' on any active board.")
         if show_tutor:
@@ -310,11 +369,13 @@ for board_idx in range(3):
                 
                 with grid_cols[col+1]:
                     disabled = not is_active or val == 1 or st.session_state.game_over
+                    is_recommended = show_tutor and ('best_move' in locals() and cell_idx == best_move)
                     st.button(
                         label,
                         key=f"btn_{cell_idx}",
                         on_click=make_move,
                         args=(cell_idx,),
                         disabled=disabled,
+                        type="primary" if is_recommended else "secondary",
                         use_container_width=True
                     )

@@ -14,7 +14,7 @@ st.markdown("""
     }
 
     /* Make grid buttons square, glassmorphism, and glowing */
-    div[data-testid="column"] button {
+    div[data-testid="column"] button, div[data-testid="stColumn"] button {
         aspect-ratio: 1 / 1 !important;
         font-size: 5rem !important;
         font-weight: bold !important;
@@ -35,7 +35,7 @@ st.markdown("""
     }
     
     /* Target whatever element Streamlit puts inside the button for the X */
-    div[data-testid="column"] button * {
+    div[data-testid="column"] button *, div[data-testid="stColumn"] button * {
         font-size: 5rem !important;
         font-weight: bold !important;
         margin: 0 !important;
@@ -45,7 +45,7 @@ st.markdown("""
     }
     
     /* Hover effect for active grid buttons */
-    div[data-testid="column"] button:hover:not(:disabled) {
+    div[data-testid="column"] button:hover:not(:disabled), div[data-testid="stColumn"] button:hover:not(:disabled) {
         border-color: rgba(0, 229, 255, 0.6) !important;
         background: rgba(0, 229, 255, 0.1) !important;
         box-shadow: 0 0 20px rgba(0, 229, 255, 0.4), inset 0 0 15px rgba(0, 229, 255, 0.1);
@@ -53,7 +53,7 @@ st.markdown("""
     }
     
     /* Primary button style for tutor mode glow */
-    div[data-testid="column"] button[kind="primary"] {
+    div[data-testid="column"] button[kind="primary"], div[data-testid="stColumn"] button[kind="primary"] {
         border-color: rgba(0, 255, 102, 0.6) !important;
         background: rgba(0, 255, 102, 0.1) !important;
         box-shadow: 0 0 20px rgba(0, 255, 102, 0.5), inset 0 0 15px rgba(0, 255, 102, 0.2) !important;
@@ -61,14 +61,14 @@ st.markdown("""
         text-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66 !important;
     }
     
-    div[data-testid="column"] button[kind="primary"]:hover:not(:disabled) {
+    div[data-testid="column"] button[kind="primary"]:hover:not(:disabled), div[data-testid="stColumn"] button[kind="primary"]:hover:not(:disabled) {
         border-color: rgba(0, 255, 102, 0.8) !important;
         background: rgba(0, 255, 102, 0.2) !important;
         box-shadow: 0 0 25px rgba(0, 255, 102, 0.6), inset 0 0 20px rgba(0, 255, 102, 0.3) !important;
     }
     
     /* Style for disabled buttons (dead boards or played spots) */
-    div[data-testid="column"] button:disabled {
+    div[data-testid="column"] button:disabled, div[data-testid="stColumn"] button:disabled {
         opacity: 1 !important; /* Removed grayed out effect */
         background: rgba(0, 229, 255, 0.05) !important; /* Keep it looking like active empty cells */
         border: 1px solid rgba(0, 229, 255, 0.2) !important;

@@ -1,6 +1,8 @@
 import random
 from game_logic import get_active_boards, get_valid_moves
 
+BEST_MOVE_CACHE = {}
+
 def get_safe_moves(board_array, active_boards):
     safe_moves_count = 0
     for move in get_valid_moves(board_array, active_boards):
@@ -58,6 +60,10 @@ def negamax(board_array, depth, alpha, beta, color=1):
     return best_value
 
 def get_best_move(board_array):
+    board_tuple = tuple(board_array)
+    if board_tuple in BEST_MOVE_CACHE:
+        return BEST_MOVE_CACHE[board_tuple]
+        
     active_boards = get_active_boards(board_array)
     depth = get_dynamic_depth(active_boards)
     
@@ -85,6 +91,7 @@ def get_best_move(board_array):
         if best_value > alpha:
             alpha = best_value
             
+    BEST_MOVE_CACHE[board_tuple] = best_move
     return best_move
 
 def get_ai_move(board_array, difficulty):

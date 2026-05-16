@@ -1,6 +1,6 @@
 # Multi-Board Notakto (AI Assistant)
 
-This is a web application for playing the game **Notakto** against an AI Assistant. The app is built using Python and [Streamlit](https://streamlit.io/).
+This is a web application for playing the game **Notakto** against an AI Opponent. The app is built using Python and [Streamlit](https://streamlit.io/).
 
 ## Game Rules
 - Notakto is a variant of Tic-Tac-Toe played across multiple boards.
@@ -52,4 +52,13 @@ This will automatically launch the Notakto app in your default web browser (typi
 ## Features
 - **Play against AI**: Choose between Easy, Medium, or Hard difficulty levels.
 - **AI Tutor**: Turn on the AI Tutor mode to get suggestions on the best optimal move during your turn.
-- **AI vs AI Simulation**: Run thousands of simulated games between two AI bots of varying difficulties to analyze strategies and win rates.
+- **AI vs AI Simulation**: Run hundreds of simulated games between two AI bots of varying difficulties to analyze strategies and win rates.
+
+## Code Layout & Architecture
+Here is a quick overview of what each file in this repository does:
+
+- **`app.py`**: The main entry point for the Streamlit web application. It handles the user interface (UI), custom CSS styling, game state management (like tracking turns and active boards), and user interactions (button clicks). 
+- **`game_logic.py`**: Contains the core rules and mechanics of Notakto. It includes functions to check if boards are "dead" (3-in-a-row achieved), find all valid moves for the current state, and determine if the overall game is over.
+- **`ai_agent.py`**: The brain of the AI opponent. It implements an adversarial search algorithm (Negamax with Alpha-Beta pruning) to determine the most optimal move. It dynamically adjusts its search depth based on the number of active boards left and uses a caching mechanism to speed up repeated calculations.
+- **`requirements.txt`**: A standard text file listing the Python dependencies required to run the project.
+- **`.streamlit/config.toml`**: Configuration file for Streamlit, used to enforce dark mode.

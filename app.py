@@ -5,15 +5,15 @@ from ai_agent import get_ai_move, get_best_move
 
 st.set_page_config(page_title="Notakto Game", layout="wide")
 
-# Custom CSS to make buttons perfectly square and large
+# Custom UI styles
 st.markdown("""
 <style>
-    /* Premium dark gradient background for the whole app */
+    /* Background */
     .stApp {
         background: linear-gradient(135deg, #0b0c10 0%, #1f2833 100%);
     }
 
-    /* Make grid buttons square, glassmorphism, and glowing */
+    /* Grid buttons */
     div[data-testid="column"] button, div[data-testid="stColumn"] button {
         aspect-ratio: 1 / 1 !important;
         font-size: 5rem !important;
@@ -23,7 +23,7 @@ st.markdown("""
         background: rgba(0, 229, 255, 0.05) !important;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        color: #00e5ff !important; /* Glowing neon blue text */
+        color: #00e5ff !important;
         text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
         padding: 0 !important;
         line-height: 1 !important;
@@ -34,7 +34,7 @@ st.markdown("""
         align-items: center !important;
     }
     
-    /* Target whatever element Streamlit puts inside the button for the X */
+    /* Button text */
     div[data-testid="column"] button *, div[data-testid="stColumn"] button * {
         font-size: 5rem !important;
         font-weight: bold !important;
@@ -44,7 +44,7 @@ st.markdown("""
         color: inherit !important;
     }
     
-    /* Hover effect for active grid buttons */
+    /* Active hover */
     div[data-testid="column"] button:hover:not(:disabled), div[data-testid="stColumn"] button:hover:not(:disabled) {
         border-color: rgba(0, 229, 255, 0.6) !important;
         background: rgba(0, 229, 255, 0.1) !important;
@@ -52,7 +52,7 @@ st.markdown("""
         transform: translateY(-2px);
     }
     
-    /* Primary button style for tutor mode glow */
+    /* Tutor mode glow */
     div[data-testid="column"] button[kind="primary"], div[data-testid="stColumn"] button[kind="primary"] {
         border-color: rgba(0, 255, 102, 0.6) !important;
         background: rgba(0, 255, 102, 0.1) !important;
@@ -67,10 +67,10 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(0, 255, 102, 0.6), inset 0 0 20px rgba(0, 255, 102, 0.3) !important;
     }
     
-    /* Style for disabled buttons (dead boards or played spots) */
+    /* Disabled buttons */
     div[data-testid="column"] button:disabled, div[data-testid="stColumn"] button:disabled {
-        opacity: 1 !important; /* Removed grayed out effect */
-        background: rgba(0, 229, 255, 0.05) !important; /* Keep it looking like active empty cells */
+        opacity: 1 !important;
+        background: rgba(0, 229, 255, 0.05) !important;
         border: 1px solid rgba(0, 229, 255, 0.2) !important;
         color: #00e5ff !important;
         text-shadow: 0 0 10px #00e5ff;
@@ -78,7 +78,7 @@ st.markdown("""
         transform: none !important;
     }
     
-    /* Sidebar dark mode enforcement */
+    /* Sidebar dark mode */
     [data-testid="stSidebar"] {
         background-color: #0b0c10 !important;
     }
@@ -86,7 +86,7 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* Fix input elements (Dropdown, Checkbox, Button) having white backgrounds in Light Mode */
+    /* Fix inputs */
     [data-testid="stSidebar"] [data-baseweb="select"] > div,
     [data-testid="stSidebar"] [data-baseweb="popover"] > div,
     [data-testid="stSidebar"] [data-testid="stButton"] button {
@@ -95,20 +95,20 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* Disable typing in the main selectbox */
+    /* Disable typing */
     [data-testid="stSidebar"] [data-baseweb="select"] input {
         caret-color: transparent !important;
         pointer-events: none !important;
         cursor: pointer !important;
     }
     
-    /* Target the Checkbox specifically */
+    /* Checkbox */
     [data-testid="stSidebar"] [data-testid="stCheckbox"] div[data-baseweb="checkbox"] > div {
         background-color: #1f2833 !important;
         border: 1px solid rgba(0, 229, 255, 0.5) !important;
     }
 
-    /* Global Selectbox Dropdown Menu (Popover) Styling */
+    /* Popover menu */
     div[data-baseweb="popover"],
     div[data-baseweb="popover"] > div {
         background-color: #1f2833 !important;
@@ -133,7 +133,7 @@ st.markdown("""
     li[role="option"]:hover, 
     li[data-baseweb="menu-item"]:hover,
     li[aria-selected="true"] {
-        background-color: rgba(0, 229, 255, 0.8) !important; /* Make it brighter to contrast with black text */
+        background-color: rgba(0, 229, 255, 0.8) !important;
     }
     li[role="option"]:hover span, 
     li[data-baseweb="menu-item"]:hover span,
@@ -141,10 +141,10 @@ st.markdown("""
     li[data-baseweb="menu-item"]:hover div,
     li[aria-selected="true"] span,
     li[aria-selected="true"] div {
-        color: #0b0c10 !important; /* Black text on hover/selected */
+        color: #0b0c10 !important;
     }
     
-    /* Hide the search bar inside the dropdown menu */
+    /* Hide search bar */
     div[data-baseweb="popover"] [data-baseweb="input"] {
         display: none !important;
     }
@@ -152,7 +152,7 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Brighter Text for specific elements */
+    /* Brighter text */
     h1 {
         color: #00e5ff !important;
         text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
@@ -165,7 +165,7 @@ st.markdown("""
         font-size: 1.1rem;
     }
     
-    /* Make st.info and st.success alerts dark with bright text */
+    /* Alerts */
     [data-testid="stNotification"] {
         background-color: rgba(255, 255, 255, 0.1) !important;
         backdrop-filter: blur(10px);
@@ -193,7 +193,7 @@ def update_game_state(last_player):
     st.session_state.active_boards = get_active_boards(st.session_state.board_array)
     if is_game_over(st.session_state.board_array):
         st.session_state.game_over = True
-        # The player who just made a move killed the final board and LOST.
+        # Last move loses
         st.session_state.winner = "AI" if last_player == "Player" else "Player"
 
 def make_move(index):
@@ -249,7 +249,7 @@ if st.sidebar.button("Run Simulation"):
         
         while True:
             if is_game_over(board):
-                # The game is already over before moving? Should not happen initially, but just in case
+                # Check if over
                 break
                 
             diff = ai1_difficulty if current_ai == 1 else ai2_difficulty
@@ -258,7 +258,7 @@ if st.sidebar.button("Run Simulation"):
             if move is not None:
                 board[move] = 1
                 if is_game_over(board):
-                    # The AI who just moved killed the final board and LOST
+                    # Last move loses
                     if current_ai == 1:
                         ai2_wins += 1
                     else:
@@ -333,7 +333,7 @@ else:
     if st.session_state.current_turn == "Player":
         st.info("Your turn! Place an 'X' on any active board.")
         if show_tutor:
-            # Show AI Tutor recommendation
+            # AI Tutor
             best_move = get_best_move(st.session_state.board_array)
             if best_move is not None:
                 board_num = best_move // 9 + 1
